@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts Open Sans-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="./style.css">
     <title>CryptoPlay</title>
 </head>
@@ -16,26 +20,55 @@
             <span id="nav-login">Login</span>
         </div>
     </nav>
-    <section id="section-all-cryptos">
+    <!-- Container -->
+    <div class="container">
+        <!-- All Cryptos Section-->
+        <section id="section-all-cryptos">
 
 
-    </section>
-    <section id="section-trade">
-
-        
-    </section>
-    <section id="section-dashboard">
-
-        
-    </section>
-    <section id="section-search">
-        <div id="search-bar">
-            <form id="search-form">
-                <input type="text">
-                <input type="submit">
+        </section>
+        <!-- Trade Section -->
+        <section id="section-trade">
+    
+            
+        </section>
+        <!-- Dashboard Section -->
+        <section id="section-dashboard">
+    
+            
+        </section>
+        <!-- Search Section -->
+        <section id="section-search">
+            <div id="bar-search">
+                <form id="form-search">
+                
+                    <input type="text">
+                    <input type="submit">
+                </form>
+            </div>
+        </section>
+        <!-- Modal Login -->
+        <div class="modal" id="modal-login">
+            <form class="form-auth" id="form-login">
+                <legend>Login</legend>
+                <input class="user-input" type="text" name="username" placeholder="Login">
+                <input class="user-input" type="password" name="password" placeholder="Password">
+                <input class="btn-submit" type="submit" value="Login">
             </form>
         </div>
-    </section>
+        <!-- Modal Signup -->
+        <div class="modal hidden" id="modal-signup">
+            <form class="form-auth" id="form-signup">
+                <legend>Sign Up</legend>
+                <input type="text" name="username">
+                <input type="email" name="email">
+    
+                <input type="password" name="password">
+                <input type="password" name="password">
+            </form>
+        </div>
+    </div>
+    
 
     
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous"></script>

@@ -1,3 +1,4 @@
+/* Setup */
 html, * {
     box-sizing: border-box;
     margin: 0;
@@ -5,11 +6,71 @@ html, * {
 }
 
 body {
-    
+    min-height: 100vh;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 18px;
 }
 
+
+/* Navigation  */
 nav {
+    display: flex;
     border: 1px solid black;
     min-height: 50px;
-    display: flex;
 }
+
+
+
+
+
+/* Modal */
+.modal {
+    position: absolute;
+    padding: 50px;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 500px;
+    box-shadow: 1px 1px 2px 1px rgba(196, 195, 195, 0.39);
+}
+
+/* Forms */
+
+#form-login {
+
+}
+
+#form-login .user-input {
+    display: block;
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    width: 100%;
+    background: lightblue;
+    border: 0;
+}
+
+#form-login .user-input::placeholder {
+    font-size: 18px;
+}
+
+.form-auth legend{
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 700;
+}
+
+
+/* Buttons */
+.btn-submit {
+    padding: 10px 20px;
+    width: 100%;
+    font-size: 18px;
+}
+
+
+/* Helpers */
+.hidden {
+    display: none;
+}
+
