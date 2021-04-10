@@ -12,14 +12,22 @@
     <title>CryptoPlay</title>
 </head>
 <body>
-    <nav>
-        <div class="navbar">
-            <span class="active" id="nav-all">Search</span>
-            <span id="nav-all-crypto">All Cryptos</span>
-            <span id="nav-signup">Sign Up</span>
-            <span id="nav-login">Login</span>
+    <header>
+        <div class="container">
+            <nav>
+                <div id="brand-title">
+                    CryptoPlay
+                </div>
+         
+                <div class="navbar">
+                    <span class="active" id="nav-all">Search</span>
+                    <span id="nav-all-crypto">All Cryptos</span>
+                    <span id="nav-signup">Sign Up</span>
+                    <span id="nav-login">Login</span>
+                </div>
+            </nav>
         </div>
-    </nav>
+    </header>
     <!-- Container -->
     <div class="container">
         <!-- All Cryptos Section-->
@@ -47,27 +55,33 @@
                 </form>
             </div>
         </section>
-        <!-- Modal Login -->
-        <div class="modal" id="modal-login">
-            <form class="form-auth" id="form-login">
-                <legend>Login</legend>
-                <input class="user-input" type="text" name="username" placeholder="Login">
-                <input class="user-input" type="password" name="password" placeholder="Password">
-                <input class="btn-submit" type="submit" value="Login">
-            </form>
-        </div>
-        <!-- Modal Signup -->
-        <div class="modal hidden" id="modal-signup">
-            <form class="form-auth" id="form-signup">
-                <legend>Sign Up</legend>
-                <input type="text" name="username">
-                <input type="email" name="email">
-    
-                <input type="password" name="password">
-                <input type="password" name="password">
-            </form>
-        </div>
+      
     </div>
+
+      <!-- Modal Login -->
+      <div class="hidden modal"  id="modal-login">
+        <form class="form-auth" id="form-login">
+            <legend>Login</legend>
+            <input class="user-input" type="text" name="username" placeholder="Login">
+            <input class="user-input" type="password" name="password" placeholder="Password">
+            <input class="btn-submit" type="submit" value="Login">
+        </form>
+        <button class="btn-switch" id="btn-to-signup">Go To Sign Up</button>
+    </div>
+    <!-- Modal Signup -->
+    <div class="hidden modal" id="modal-signup">
+        <form class="form-auth" id="form-signup">
+            <legend>Sign Up</legend>
+            <input class="user-input" type="text" name="username" placeholder="Username">
+            <input class="user-input" type="email" name="email"  placeholder="Email">
+            <input class="user-input" type="password" name="password" placeholder="Password">
+            <input class="user-input" type="password" name="password" placeholder="Retype Password Here">
+            <input class="btn-submit" type="submit" value="Sign Up">
+        </form>
+        <button class="btn-switch" id="btn-to-login">Go To Login</button>
+    </div>
+    <!-- Modal Background -->
+    <div class="hidden" id="modal-background"></div>
     
 
     
