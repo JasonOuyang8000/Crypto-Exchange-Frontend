@@ -1,0 +1,15 @@
+html, * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    
+}
+
+nav {
+    border: 1px solid black;
+    min-height: 50px;
+    display: flex;
+}
