@@ -1,3 +1,4 @@
+
 // Body 
 const body = document.querySelector('body');
 
@@ -34,6 +35,7 @@ const btnToSignup = document.getElementById('btn-to-signup');
 
 // Else
 const userMessage = document.getElementById('user-message');
+const resultsSearch = document.getElementById('results-search');
 
 
 // Show Section
@@ -183,14 +185,55 @@ const handleFormSignup = event => {
 const handleFormSearch = async event => {
     event.preventDefault();
     const searchInput = event.target.elements[0];
+
     try {
+        if (searchInput.value === '') throw new Error('Search Field Cannot Be Blank!');
+
         const response = await axios.get(`http://localhost:3001/cryptos?q=${searchInput.value}`);
-        console.log(response);
+        
+        if (response.data.message === 'ok') {
+            const { cryptos } = response.data;
+            removeAllChildNodes(resultsSearch);
+            if (!cryptos.length) {
+                resultsSearch.innerHTML = '<h3>Nothing was found </h3>';
+            }
+            else {
+                cryptos.forEach(crypto => {
+                    const cardHolder = createCryptoCard(crypto);
+                    resultsSearch.append(cardHolder);
+                })
+            }
+            
+            searchInput.value = '';
+        }
     }
     catch(error) {
-        console.log(error);
+        if (error.message) {
+            displayErrorMessage(error.message);
+            return;
+        }
+        displayErrorMessage(error.response.data.error);
     }
 };
+
+const createCryptoCard =  ({uuid, name, symbol, iconUrl}) => {
+    const cardHolderDom = document.createElement('div');
+    const imgDom = document.createElement('img');
+    const symbolDom = document.createElement('h3');
+    const cardDom = document.createElement('div');
+    const nameDom = document.createElement('h3');
+
+    cardDom.classList.add('card-crypto');
+    nameDom.innerText = name;
+    imgDom.src = iconUrl;
+    symbolDom.innerText = symbol;
+
+    cardDom.setAttribute('data-id', uuid);
+
+    cardDom.append(imgDom, symbolDom, nameDom);
+    cardHolderDom.append(cardDom);
+    return cardHolderDom;
+}
 
 
 

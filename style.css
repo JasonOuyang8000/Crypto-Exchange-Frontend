@@ -9,9 +9,11 @@ body {
     min-height: 100vh;
     font-family: 'Open Sans', sans-serif;
     font-size: 18px;
+    background: rgb(239,254,255);
+    background: linear-gradient(90deg, rgba(239,254,255,1) 18%, rgba(235,248,255,0.6334908963585435) 100%);
 }
 
-/* Typography */
+/* Typography */a
 #brand-title {
     font-size: 24px;
     font-weight: 600;
@@ -27,7 +29,8 @@ body {
 
 /* Navigation  */
 header {
-    border: 1px solid black;
+    border-bottom: 1px solid rgb(255, 220, 25);
+   
  
 }
 nav {
@@ -35,6 +38,7 @@ nav {
     min-height: 80px;
     padding: 10px;
     align-items: center;
+ 
 }
 
 .navbar {
@@ -61,7 +65,7 @@ nav span:hover {
     left: 50%;
     transform: translate(-50%, 0);
     width: 500px;
-    box-shadow: 1px 1px 2px 1px rgba(53, 52, 52, 0.39);
+    box-shadow: 1px 1px 1px 1px rgba(53, 52, 52, 0.39);
     background: rgb(255, 254, 254);
     z-index: 2;
 }
@@ -115,28 +119,39 @@ form input {
     margin: 0 auto;
     display: flex;
     justify-content: space-evenly;
+    
 }
 
 #form-search input[type="text"] {
     padding: 10px 15px; 
-    background: rgb(213, 247, 244);
-    border: 1px solid rgba(128, 128, 128, 0.473);
-    font-size: 18px;
-    border-radius: 15px;
+    background: rgb(253, 253, 253);
     width: 70%;
+    border: 0;
+    box-shadow: 1px 1px 1px 2px rgba(26, 25, 25, 0.055);
+    font-size: 18px;
+    /* border: 1px solid rgb(126, 134, 48);
+
+    border-radius: 15px;
+    width: 70%; */
+}
+#form-search input[type="text"]::placeholder {
+    font-size: 18px;
 }
 
 #form-search input[type="submit"] {
-    padding: 10px 15px;
-    border-radius: 10px;
-    border: 1px solid rgba(128, 128, 128, 0.473);
-    background: rgb(241, 253, 252);
+    padding: 15px 10px;
+    border: 0;
+    color: rgb(252, 252, 252);
+    border-radius: 15px;
+    box-shadow: 1px 1px 0px 0px rgba(32, 32, 32, 0.315);
+    background: rgb(71, 64, 80);
     font-size: 18px;
 
 }
 
 #bar-search {
-    margin-top: 40px;
+    margin-top: 200px;
+    margin-bottom: 40px;
 }
 
 /* Buttons */
@@ -169,6 +184,43 @@ input[type="submit"]:hover {
     text-align: center;
     width: 100%;
     z-index: 2;
+}
+
+
+/* Card */
+#results-search {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#results-search > div {
+    width: 25%;
+    padding: 10px;
+}
+
+.card-crypto {
+    box-shadow: 1px 1px 1px 1px rgba(167, 164, 164, 0.192);
+    text-align: center;
+    background: rgb(253, 253, 253);
+    padding: 10px;
+    border: 1px solid rgb(255, 220, 25);
+    height: 100%;
+}
+
+.card-crypto h3:nth-child(2) {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.card-crypto h3:nth-child(3) {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.card-crypto img {
+    height: 64px;
+    width: 64px;
+    margin-bottom: 10px;
 }
 
 
