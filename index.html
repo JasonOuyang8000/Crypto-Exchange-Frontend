@@ -14,44 +14,40 @@
 <body>
     <header>
         <div class="container">
-            <nav>
+            <nav id="nav">
                 <div id="brand-title">
                     CryptoPlay
                 </div>
          
                 <div class="navbar">
-                    <span class="active" id="nav-all">Search</span>
-                    <span id="nav-all-crypto">All Cryptos</span>
-                    <span id="nav-signup">Sign Up</span>
-                    <span id="nav-login">Login</span>
                 </div>
+
             </nav>
         </div>
     </header>
     <!-- Container -->
     <div class="container">
         <!-- All Cryptos Section-->
-        <section id="section-all-cryptos">
+        <section class="hidden" id="section-all-cryptos">
 
-
+            All Cryptos
         </section>
         <!-- Trade Section -->
-        <section id="section-trade">
+        <section  class="hidden" id="section-trade">
     
-            
+                Trade
         </section>
         <!-- Dashboard Section -->
-        <section id="section-dashboard">
-    
+        <section  class="hidden" id="section-dashboard">
+            dashboard
             
         </section>
         <!-- Search Section -->
         <section id="section-search">
             <div id="bar-search">
                 <form id="form-search">
-                
                     <input type="text">
-                    <input type="submit">
+                    <input type="submit" value='Search Crypto'>
                 </form>
             </div>
         </section>
@@ -82,6 +78,10 @@
     </div>
     <!-- Modal Background -->
     <div class="hidden" id="modal-background"></div>
+    <!-- Message -->
+    <div class="hidden" id="user-message">
+        <h3></h3>
+    </div>
     
 
     
