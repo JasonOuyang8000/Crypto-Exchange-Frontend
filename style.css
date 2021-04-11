@@ -9,12 +9,12 @@ body {
     min-height: 100vh;
     font-family: 'Open Sans', sans-serif;
     font-size: 18px;
-    background: rgb(239,254,255);
-    background: linear-gradient(90deg, rgba(239,254,255,1) 18%, rgba(235,248,255,0.6334908963585435) 100%);
+    background-image: linear-gradient(to bottom, #002c6f, #005c87, #3b868d, #8fab9f, #d0d1ce);
+    color: rgb(255, 255, 255);
 }
 
-/* Typography */a
-#brand-title {
+/* Typography */
+#brand-title h1 {
     font-size: 24px;
     font-weight: 600;
 }
@@ -66,7 +66,7 @@ nav span:hover {
     transform: translate(-50%, 0);
     width: 500px;
     box-shadow: 1px 1px 1px 1px rgba(53, 52, 52, 0.39);
-    background: rgb(255, 254, 254);
+    background: rgb(242, 251, 255);
     z-index: 2;
 }
 
@@ -75,7 +75,7 @@ nav span:hover {
     top: 0;
     width: 100%;
     height: 100%;
-    background: rgba(24, 24, 24, 0.671);
+    background: rgba(24, 24, 24, 0.932);
     z-index: 1;
 }
 
@@ -98,7 +98,8 @@ form input {
     display: block;
     padding: 15px 20px;
     width: 100%;
-    background: lightblue;
+    background: rgb(243, 243, 243);
+    box-shadow: 1px 1px 1px 1px rgba(14, 14, 14, 0.11);
     border: 0;
     font-size: 18px;
 }
@@ -107,11 +108,13 @@ form input {
     font-size: 18px;
 }
 
-.form-auth legend{
-    font-size: 24px;
+.form-auth legend {
+    font-size: 30px;
     margin-bottom: 20px;
     text-align: center;
     font-weight: 700;
+    color: rgb(46, 44, 44);
+
 }
 
 #form-search {
@@ -123,12 +126,16 @@ form input {
 }
 
 #form-search input[type="text"] {
-    padding: 10px 15px; 
-    background: rgb(253, 253, 253);
+    padding: 10px 20px 10px 20px; 
+    background: rgb(14, 26, 92);
     width: 70%;
     border: 0;
     box-shadow: 1px 1px 1px 2px rgba(26, 25, 25, 0.055);
     font-size: 18px;
+    color: rgb(247, 247, 247);
+    border: 2px solid rgb(243, 217, 70);
+    border-radius: 20px;
+
     /* border: 1px solid rgb(126, 134, 48);
 
     border-radius: 15px;
@@ -136,17 +143,19 @@ form input {
 }
 #form-search input[type="text"]::placeholder {
     font-size: 18px;
+    color: rgb(255, 255, 255);
+ 
 }
 
 #form-search input[type="submit"] {
-    padding: 15px 10px;
+    padding: 10px 20px;
     border: 0;
     color: rgb(252, 252, 252);
-    border-radius: 15px;
+    border-radius: 40px;
     box-shadow: 1px 1px 0px 0px rgba(32, 32, 32, 0.315);
-    background: rgb(71, 64, 80);
+    background: rgb(14, 26, 92);
     font-size: 18px;
-
+    border: 2px solid rgb(243, 217, 70);
 }
 
 #bar-search {
@@ -159,17 +168,28 @@ form input {
     padding: 10px 20px;
     width: 100%;
     font-size: 18px;
+    background: rgb(79, 116, 97);
+    color: white;
+    border-radius: 20px;
+    border: 0;
 }
 
 .btn-switch {
     width: 100%;
     font-size: 18px;
     padding: 10px 20px;
+    border-radius: 20px;
+    border: 0;
+    background: rgb(39, 31, 31);
+    color: white;
 }
 
+button:hover,
 input[type="submit"]:hover {
     cursor: pointer;
 }
+
+
 
 /* User Message */
 #user-message h3{
@@ -177,7 +197,7 @@ input[type="submit"]:hover {
 }
 
 #user-message {
-    background: rgb(252, 226, 226);
+    background: rgb(255, 87, 87);
     position: absolute;
     top: 0;
     padding: 30px;
@@ -191,6 +211,12 @@ input[type="submit"]:hover {
 #results-search {
     display: flex;
     flex-wrap: wrap;
+  
+}
+
+#results-search h3 {
+    text-align: center;
+    width: 100%;
 }
 
 #results-search > div {
@@ -203,8 +229,10 @@ input[type="submit"]:hover {
     text-align: center;
     background: rgb(253, 253, 253);
     padding: 10px;
-    border: 1px solid rgb(255, 220, 25);
+    border: 3px solid rgb(255, 220, 25);
+    border-radius: 25px;
     height: 100%;
+    color: #000000;
 }
 
 .card-crypto h3:nth-child(2) {

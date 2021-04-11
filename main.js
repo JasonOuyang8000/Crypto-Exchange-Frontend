@@ -178,8 +178,41 @@ const handleFormLogin = async event => {
     }
 }
 
-const handleFormSignup = event => {
+const handleFormSignup = async event => {
     event.preventDefault();
+    try {
+        const [username, email, passwordOne, passwordTwo, balance] = event.target.elements;
+      
+        if (passwordOne.value !== passwordTwo.value) {
+            passwordOne.value = '';
+            passwordTwo.value = '';
+            throw new Error('Passwords do not Match!');
+        }
+
+        const formParams = {
+            username: username.value,
+            email: email.value,
+            password: passwordOne.value,
+            balance: balance.value
+        };
+
+        const response = await axios.post('http://localhost:3001/users', formParams);
+
+        console.log(response);
+
+
+    }
+    catch(error) {
+     
+        if (error.message === '') {
+            console.log(error.response);
+            displayErrorMessage(error.message);
+            return;
+        }
+       
+        displayErrorMessage(error.response.data.error);
+    }
+
 }
 
 const handleFormSearch = async event => {
