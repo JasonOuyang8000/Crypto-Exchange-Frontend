@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const replaceInFile = require('replace-in-file');
 
 const routesReport = require('rowdy-logger').begin(app)
 
@@ -12,7 +13,15 @@ app.get('/', (req, res) => {
 
 app.get('/main.js', (req, res) => {
   const filepath = path.join(__dirname, 'main.js')
-  res.sendFile(filepath)
+  if (process.env.NODE_ENV === 'production') {
+    await replaceInFile({
+      files: filepath,
+      from: 'http://localhost:3001',
+      to: 'https://crypto-play-backend.herokuapp.com/'
+    });
+  
+  }
+  res.sendFile(filepath);
 })
 
 app.get('/style.css', (req, res) => {

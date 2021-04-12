@@ -36,8 +36,29 @@
         </section>
         <!-- Trade Section -->
         <section  class="hidden" id="section-trade">
-    
-                Trade
+                <div class="form-holder">
+                    <div>
+                        <form class="form-transaction" id="form-buy">  
+                            <select>
+        
+                            </select>
+                        
+                            <input type="number" placeholder="Dollar Amount" name="dollar-amount" min="0" step="0.01" required>
+                            <input type="submit" value="Buy">
+                        </form>
+                    </div>
+                    <div>
+                        <form class="form-transaction" id="form-sell">  
+                            <select>
+                                
+                            </select>
+                        
+                            <input type="number" placeholder="Coin Amount" name="coin-amount">
+                            <input type="submit" value="Sell">
+                        </form>
+                    </div>
+              
+                </div>
         </section>
         <!-- Dashboard Section -->
         <section  class="hidden" id="section-dashboard">
@@ -62,7 +83,7 @@
     </div>
 
       <!-- Modal Login -->
-      <div class="hidden modal"  id="modal-login">
+    <div class="hidden modal"  id="modal-login">
         <form class="form-auth" id="form-login">
             <legend>Login</legend>
             <input class="user-input" type="text" name="username" placeholder="Username">
@@ -83,6 +104,10 @@
             <input class="btn-submit" type="submit" value="Sign Up">
         </form>
         <button class="btn-switch" id="btn-to-login">Go To Login</button>
+    </div>
+    <!-- Modal Transaction -->
+    <div class="hidden modal"  id="modal-transaction">
+        
     </div>
     <!-- Modal Background -->
     <div class="hidden" id="modal-background"></div>

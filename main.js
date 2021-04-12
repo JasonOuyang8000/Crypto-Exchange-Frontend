@@ -6,6 +6,7 @@ const body = document.querySelector('body');
 let currentSection = 'search';
 let isLoggedIn = null;
 let allCryptos = null;
+let user = null;
 
 // Sections
 const allSections = document.querySelectorAll('section');
@@ -24,11 +25,15 @@ const allModals = document.querySelectorAll('.modal');
 const modalSignup = document.getElementById('modal-signup');
 const modalLogin = document.getElementById('modal-login');
 const modalBackground = document.getElementById('modal-background');
+const modalTransaction = document.getElementById('modal-transaction');
 
 // Forms
 const formLogin = document.getElementById('form-login');
 const formSignup = document.getElementById('form-signup');
 const formSearch = document.getElementById('form-search');
+const formBuySelect = document.querySelector('#form-buy select');
+const formBuy = document.querySelector('#form-buy');
+const formBuyDollarInput = document.querySelector('#form-buy input[type="number"]');
 
 // Buttons
 const btnToLogin = document.getElementById('btn-to-login');
@@ -70,8 +75,11 @@ const removeAllChildNodes = parentNode => {
 const logoutUser = () => {
     localStorage.removeItem('userToken');
     showSection(searchSection);
+    user = null;
     authenticate();
 }
+
+// Update Trade Section 
 
 // Change NavBar depending on login state and add event listeners to each of the nav links.
 const changeNavBar = () => {
@@ -103,7 +111,10 @@ const changeNavBar = () => {
         navTrade.innerText = 'Trade';
 
         navDashboard.addEventListener('click', () => showSection(dashboardSection));
-        navTrade.addEventListener('click', () => showSection(tradeSection));
+        navTrade.addEventListener('click', async () => {
+            await loadAllUserInfo();
+            showSection(tradeSection);
+        });
         navLogout.addEventListener('click', () => logoutUser());
 
         navContainer.append(navTrade, navDashboard, navLogout);
@@ -124,18 +135,37 @@ const changeNavBar = () => {
 
 }
 
-// Load All Cryptos all Cryptos Page
+// Load All Cryptos
 const loadAllCryptos = async () => {
     try {
         const response = await axios.get('http://localhost:3001/cryptos');
         const { cryptos } = response.data;
         allCryptos = cryptos;
     }
-    catch(error) {
+    catch({response}) {
     
         displayErrorMessage(response.data.error);
     }
 };
+
+//Load all User Cryptos
+const loadAllUserInfo = async () => {
+    try {
+        const response = await axios.get('http://localhost:3001/users/cryptos', {
+            headers: {
+                userToken: localStorage.getItem('userToken')
+            }
+        });
+
+        console.log(response.data);
+        
+        
+    } 
+    catch({response}) {
+    
+        displayErrorMessage(response.data.error);
+    }
+}
 
 
 const displayTable = (cryptos, parent, props, classStyle) => {
@@ -287,6 +317,46 @@ const handleFormSignup = async event => {
 
 }
 
+const createConfirmOrder = (coinPrice, dollarAmount, totalAmount, symbol) => {
+    removeAllChildNodes(modalTransaction); 
+    const p = document.createElement('p');
+    p.innerText = `You are buying ${totalAmount} ${symbol} for  $${dollarAmount}. (${1 / parseFloat(coinPrice)} per $1)`;
+    modalTransaction.append(p);
+    console.log('test');
+
+}
+
+
+const handleFormBuy = async event => {
+    event.preventDefault();
+    try {
+        const [cryptoIdDom, dollarInputDom ] = event.target.elements;
+
+        const response = await axios.get(`http://localhost:3001/cryptos/${cryptoIdDom.value}`);
+
+        const { coin } = response.data;
+        
+        const coinAmount = convertPriceToCrypto(dollarInputDom.value, coin.price);
+        
+        createConfirmOrder(coin.price, dollarInputDom.value, coinAmount, coin.symbol);
+        
+        
+        showModal(modalTransaction);
+    }
+    catch({response}) {
+        displayErrorMessage(response.data.error);
+    }
+ 
+};
+
+const convertPriceToCrypto = (dollarAmount, cryptoPrice) => {
+    const pricePerDollar = 1 / parseFloat(cryptoPrice);
+
+    const total = parseFloat(dollarAmount) * pricePerDollar;
+
+    return total;
+}
+
 const handleFormSearch = async event => {
     event.preventDefault();
     const searchInput = event.target.elements[0];
@@ -322,6 +392,9 @@ const handleFormSearch = async event => {
     }
 };
 
+
+
+
 const createCryptoCard =  ({uuid, name, symbol, iconUrl}) => {
     const cardHolderDom = document.createElement('div');
     const imgDom = document.createElement('img');
@@ -341,6 +414,18 @@ const createCryptoCard =  ({uuid, name, symbol, iconUrl}) => {
     return cardHolderDom;
 }
 
+// Generate Options in Select
+const generateSelectOptions = (selectParent, options) => {
+    removeAllChildNodes(selectParent);
+    options.forEach(o => {  
+        const option = document.createElement('option');
+        option.value = o['uuid'];
+        option.innerText =` ${o['symbol']} (${o['name']})`;
+        selectParent.append(option);
+    });
+
+    return; 
+};
 
 
 // Displays Error Message for short time.
@@ -356,13 +441,13 @@ const displayErrorMessage = (errorMessage) => {
 
 // Events Listeners 
 
-// Nav Event Listeners
-
-
 // Form Event Listeners
 formLogin.addEventListener('submit', handleFormLogin);
 formSignup.addEventListener('submit', handleFormSignup);
 formSearch.addEventListener('submit', handleFormSearch);
+formBuy.addEventListener('submit', handleFormBuy);
+
+
 // Button Event Listeners
 btnToSignup.addEventListener('click',() => showModal(modalSignup));
 btnToLogin.addEventListener('click',() => showModal(modalLogin));
@@ -374,5 +459,8 @@ modalBackground.addEventListener('click', closeAllModals);
 
 
 // On Load
-loadAllCryptos();
-authenticate();
+loadAllCryptos().then(() => {
+    generateSelectOptions(formBuySelect, allCryptos);
+    authenticate();
+});
+

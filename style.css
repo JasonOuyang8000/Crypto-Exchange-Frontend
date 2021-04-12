@@ -13,6 +13,18 @@ body {
     color: rgb(255, 255, 255);
 }
 
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 /* Typography */
 #brand-title h1 {
     font-size: 24px;
@@ -79,6 +91,9 @@ nav span:hover {
     z-index: 1;
 }
 
+#modal-transaction {
+    color: #000;
+}
 
 
 /* Forms */
@@ -161,6 +176,62 @@ form input {
 #bar-search {
     margin-top: 200px;
     margin-bottom: 40px;
+}
+
+.form-holder {
+    display: flex;
+    margin-top: 40px;
+}
+
+.form-holder div {
+    width: 50%;
+}
+
+.form-transaction {
+    border: 1px solid black;
+    width: 400px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.555);
+}
+
+.form-transaction select {
+    display: block;
+    width: 100%;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.555);
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border: 1px solid #fff;
+}
+
+.form-transaction select option {
+    display: block;
+    width: 100%;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.555);
+    padding: 10px 20px;
+}
+
+.form-transaction input[type="number"] {
+    padding: 10px 20px;
+    font-size: 16px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.555);
+    color: #fff;
+    margin-bottom: 20px;
+    border: 1px solid #fff;
+}
+
+.form-transaction input[type="number"]::placeholder {
+    color: #fff;
+}
+
+.form-transaction input[type="submit"] {
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: 0;
+    display: block;
+    width: 100%;
 }
 
 /* Buttons */
