@@ -1,7 +1,7 @@
-
 // Body 
 const body = document.querySelector('body');
 
+const apiLink = 'http://localhost:3001'
 // State
 let currentSection = 'search';
 let isLoggedIn = null;
@@ -138,7 +138,7 @@ const changeNavBar = () => {
 // Load All Cryptos
 const loadAllCryptos = async () => {
     try {
-        const response = await axios.get('http://localhost:3001/cryptos');
+        const response = await axios.get(`${apiLink}/cryptos`);
         const { cryptos } = response.data;
         allCryptos = cryptos;
     }
@@ -151,7 +151,7 @@ const loadAllCryptos = async () => {
 //Load all User Cryptos
 const loadAllUserInfo = async () => {
     try {
-        const response = await axios.get('http://localhost:3001/users/cryptos', {
+        const response = await axios.get(`${apiLink}/users/cryptos`, {
             headers: {
                 userToken: localStorage.getItem('userToken')
             }
@@ -216,7 +216,7 @@ const authenticate = async () => {
     const userToken = localStorage.getItem('userToken');
     if (userToken) {
         try {   
-            const response = await axios.get('http://localhost:3001/users/verify',{
+            const response = await axios.get(`${apiLink}/users/verify`,{
                 headers: {
                     userToken
                 }
@@ -255,7 +255,7 @@ const handleFormLogin = async event => {
     };
 
     try {
-       const response = await axios.post('http://localhost:3001/users/login', formParams);
+       const response = await axios.post(`${apiLink}/users/login`, formParams);
        const {userToken, message} = response.data;
        if (message === 'ok') {
            localStorage.setItem('userToken', userToken);
@@ -289,7 +289,7 @@ const handleFormSignup = async event => {
             balance: balance.value
         };
 
-        const response = await axios.post('http://localhost:3001/users', formParams);
+        const response = await axios.post(`${apiLink}/users`, formParams);
         const { userToken, message } = response.data;
         if (message === 'ok') {
             localStorage.setItem('userToken', userToken);
@@ -332,7 +332,7 @@ const handleFormBuy = async event => {
     try {
         const [cryptoIdDom, dollarInputDom ] = event.target.elements;
 
-        const response = await axios.get(`http://localhost:3001/cryptos/${cryptoIdDom.value}`);
+        const response = await axios.get(`${apiLink}/cryptos/${cryptoIdDom.value}`);
 
         const { coin } = response.data;
         
@@ -364,7 +364,7 @@ const handleFormSearch = async event => {
     try {
         if (searchInput.value === '') throw new Error('Search Field Cannot Be Blank!');
 
-        const response = await axios.get(`http://localhost:3001/cryptos?q=${searchInput.value}`);
+        const response = await axios.get(`${apiLink}/cryptos?q=${searchInput.value}`);
         
         if (response.data.message === 'ok') {
             const { cryptos } = response.data;

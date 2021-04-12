@@ -16,7 +16,7 @@ app.get('/main.js', async (req, res) => {
   if (process.env.NODE_ENV === 'production') {
     await replaceInFile({
       files: filepath,
-      from: '/http://localhost:3001/g',
+      from: 'http://localhost:3001',
       to: 'https://crypto-play-backend.herokuapp.com'
     });
   
