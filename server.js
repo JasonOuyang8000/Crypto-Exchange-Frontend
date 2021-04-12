@@ -16,13 +16,13 @@ app.get('/main.js', async (req, res) => {
   if (process.env.NODE_ENV === 'production') {
     await replaceInFile({
       files: filepath,
-      from: 'http://localhost:3001',
+      from: 'http://localhost:3001/g',
       to: 'https://crypto-play-backend.herokuapp.com'
     });
   
   }
   res.sendFile(filepath);
-})
+});
 
 app.get('/style.css', (req, res) => {
   const filepath = path.join(__dirname, 'style.css')
