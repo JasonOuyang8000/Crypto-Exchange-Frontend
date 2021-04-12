@@ -206,6 +206,32 @@ input[type="submit"]:hover {
     z-index: 2;
 }
 
+/* Tables */
+.all-cryptos-table {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgb(255, 255, 255);
+    padding: 10px;
+    background: rgba(5, 5, 5, 0.719);
+}
+
+.all-cryptos-table div {
+   display: flex;
+   padding: 10px 20px;
+   align-items: center;
+   justify-content: center;
+}
+
+.all-cryptos-table td img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.all-cryptos-table tr {
+   border: 1px solid rgb(185, 142, 142);
+}   
+
 
 /* Card */
 #results-search {

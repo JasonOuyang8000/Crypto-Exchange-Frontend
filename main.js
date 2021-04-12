@@ -5,6 +5,7 @@ const body = document.querySelector('body');
 // State
 let currentSection = 'search';
 let isLoggedIn = null;
+let allCryptos = null;
 
 // Sections
 const allSections = document.querySelectorAll('section');
@@ -36,6 +37,7 @@ const btnToSignup = document.getElementById('btn-to-signup');
 // Else
 const userMessage = document.getElementById('user-message');
 const resultsSearch = document.getElementById('results-search');
+const allCryptosHolder = document.getElementById('all-cryptos-holder');
 
 
 // Show Section
@@ -71,7 +73,7 @@ const logoutUser = () => {
     authenticate();
 }
 
-// Change NavBar depending on login state
+// Change NavBar depending on login state and add event listeners to each of the nav links.
 const changeNavBar = () => {
     removeAllChildNodes(navContainer);
     const navAllCryptos = document.createElement('span');
@@ -81,7 +83,14 @@ const changeNavBar = () => {
     navAllCryptos.innerText = 'All Cryptos';
     navSearch.innerText = 'Search';
     navSearch.addEventListener('click', () => showSection(searchSection));
-    navAllCryptos.addEventListener('click', () => showSection(allCryptosSection));
+    navAllCryptos.addEventListener('click', async () => {
+        showSection(allCryptosSection);
+        if (allCryptos !== null ) {
+            await loadAllCryptos();
+            displayTable(allCryptos, allCryptosHolder, ['rank','name', 'symbol','price', 'marketCap'], 'all-cryptos-table');
+        }
+    });
+    
     navContainer.append(navSearch, navAllCryptos);
 
     if (isLoggedIn) {
@@ -115,7 +124,61 @@ const changeNavBar = () => {
 
 }
 
+// Load All Cryptos all Cryptos Page
+const loadAllCryptos = async () => {
+    try {
+        const response = await axios.get('http://localhost:3001/cryptos');
+        const { cryptos } = response.data;
+        allCryptos = cryptos;
+    }
+    catch(error) {
+    
+        displayErrorMessage(response.data.error);
+    }
+};
 
+
+const displayTable = (cryptos, parent, props, classStyle) => {
+    removeAllChildNodes(parent);
+ 
+    const table = document.createElement('table');
+    const thead = document.createElement('thead');
+    const tr = document.createElement('tr');
+    const tbody = document.createElement('tbody');
+
+    table.classList.add(classStyle);
+ 
+    props.forEach(prop => {
+        const th = document.createElement('th');
+        th.innerText = prop;
+        tr.append(th);
+    });
+    thead.append(tr);
+
+    cryptos.forEach(crypto => {
+        const tr = document.createElement('tr');
+        props.forEach(prop => {
+            const td = document.createElement('td');
+            const div = document.createElement('div');
+            if (prop === 'name' && crypto['iconUrl']) {
+                const img = document.createElement('img');
+                img.src = crypto['iconUrl'];
+                div.append(img);
+
+                div.style.color = crypto['color'];
+
+            }
+            div.append(crypto[prop]);
+            td.append(div);
+            tr.append(td);
+        });
+        tbody.append(tr);
+    });
+
+    table.append(thead, tbody);
+    
+    parent.append(table);
+};
 
 
 // Authenticate User Check Token. Also Determines which navbar to load for the user.
@@ -197,15 +260,24 @@ const handleFormSignup = async event => {
         };
 
         const response = await axios.post('http://localhost:3001/users', formParams);
-
-        console.log(response);
+        const { userToken, message } = response.data;
+        if (message === 'ok') {
+            localStorage.setItem('userToken', userToken);
+            authenticate();
+            username.value = '';
+            email.value = '';
+            passwordOne.value = '';
+            passwordTwo.value = '';
+            balance.value = '';
+            closeAllModals();
+        }
 
 
     }
     catch(error) {
      
         if (error.message === '') {
-            console.log(error.response);
+           
             displayErrorMessage(error.message);
             return;
         }
@@ -241,7 +313,8 @@ const handleFormSearch = async event => {
         }
     }
     catch(error) {
-        if (error.message) {
+     
+        if (error.message !== '') {
             displayErrorMessage(error.message);
             return;
         }
@@ -301,4 +374,5 @@ modalBackground.addEventListener('click', closeAllModals);
 
 
 // On Load
+loadAllCryptos();
 authenticate();
