@@ -17,7 +17,7 @@ app.get('/main.js', async (req, res) => {
     await replaceInFile({
       files: filepath,
       from: 'http://localhost:3001',
-      to: 'https://crypto-play-backend.herokuapp.com/'
+      to: 'https://crypto-play-backend.herokuapp.com'
     });
   
   }
