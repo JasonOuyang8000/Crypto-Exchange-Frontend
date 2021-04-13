@@ -53,8 +53,10 @@ const allCryptosHolder = document.getElementById('all-cryptos-holder');
 const userCryptosTable = document.getElementById('user-cryptos-table-holder');
 const tradeBalanceHolder = document.getElementById('balance-holder-trade');
 const dashboardBalanceHolder = document.getElementById('balance-holder-dashboard');
-const sidebarOne = document.getElementById('side-bar-one');
+const sidebarOne = document.getElementById('sidebar-one');
 const dashboardContainerOne = document.getElementById('dashboard-container-one');
+const loaderOneFull = document.getElementById('absolute-loader-holder');
+const loaderTwoFull = document.getElementById('absolute-loader-holder-two');
 
 // Show Section
 const showSection = (section) => {
@@ -103,9 +105,13 @@ const changeNavBar = () => {
     navSearch.innerText = 'Search';
     navSearch.addEventListener('click', () => showSection(searchSection));
     navAllCryptos.addEventListener('click', async () => {
-        showSection(allCryptosSection);
+       
         if (allCryptos !== null ) {
+            showFullLoader(loaderTwoFull);
+            hideAllSections();
             await loadAllCryptos();
+            showSection(allCryptosSection);
+            hideFullLoader(loaderTwoFull);
             displayTable(allCryptos, allCryptosHolder, [{'rank': 'Rank'},{'name': 'Name'}, {'symbol':'Symbol'},{'price': 'Price'}, {'marketCap': 'Market Cap'}], 'all-cryptos-table');
         }
     });
@@ -122,16 +128,24 @@ const changeNavBar = () => {
         navTrade.innerText = 'Trade';
 
         navDashboard.addEventListener('click', async () => {
-            showSection(dashboardSection)
+            showFullLoader(loaderTwoFull);
+            hideAllSections();
             await loadAllCryptos();
             await loadAllUserInfo();
+            showSection(dashboardSection);
+            hideFullLoader(loaderTwoFull);
+            displayTable(user.cryptos, dashboardContainerOne, [{'name': 'Name'}, {'amount': 'Amount'}, {'estimatedPrice': 'Estimated Value'}], 'user-cryptos-table');
             displayBalanceContainer(dashboardBalanceHolder);
+            displayWelcomeCard(sidebarOne);
         });
 
         navTrade.addEventListener('click', async () => {
+            showFullLoader(loaderTwoFull);
+            hideAllSections();
             await loadAllCryptos();
             await loadAllUserInfo();
             showSection(tradeSection);
+            hideFullLoader(loaderTwoFull);
             displayBalanceContainer(tradeBalanceHolder);
             displayTable(user.cryptos, userCryptosTable, [{'name': 'Name'}, {'amount': 'Amount'}, {'estimatedPrice': 'Estimated Value'}], 'user-cryptos-table');
             generateSelectOptions(formSellSelect, user.cryptos);
@@ -158,19 +172,22 @@ const changeNavBar = () => {
 
 // Load All Cryptos
 const loadAllCryptos = async () => {
+  
     try {
         const response = await axios.get(`${apiLink}/cryptos`);
         const { cryptos } = response.data;
         allCryptos = cryptos;
+        
     }
     catch({response}) {
-    
+        hideFullLoader(loaderTwoFull);
         displayErrorMessage(response.data.error);
     }
 };
 
 //Load all User Cryptos
 const loadAllUserInfo = async () => {
+ 
     try {
         const response = await axios.get(`${apiLink}/users/cryptos`, {
             headers: {
@@ -200,11 +217,12 @@ const loadAllUserInfo = async () => {
                 }
             });
         }
-        
+      
     } 
     catch({response}) {
     
         displayErrorMessage(response.data.error);
+        hideFullLoader(loaderTwoFull);
     }
 }
 
@@ -261,6 +279,7 @@ const displayTable = (cryptos, parent, props, classStyle) => {
 // Authenticate User Check Token. Also Determines which navbar to load for the user.
 const authenticate = async () => {
     const userToken = localStorage.getItem('userToken');
+    showFullLoader(loaderOneFull);
     if (userToken) {
         try {   
             const response = await axios.get(`${apiLink}/users/verify`,{
@@ -273,15 +292,17 @@ const authenticate = async () => {
             if (message === 'ok') {
                 isLoggedIn = true;
             }
+            hideFullLoader(loaderOneFull);
         }
         catch({response}) {
             isLoggedIn = false;
-          
+            hideFullLoader(loaderOneFull);
         }
     }
 
    else {
        isLoggedIn = false;
+       hideFullLoader(loaderOneFull);
    }
 
    
@@ -400,8 +421,10 @@ const processOrder = async (dollarAmount, coinAmount, type, cryptoId) => {
         });
 
         if (response.data.message = 'ok') {
+            showFullLoader(loaderTwoFull);
             await loadAllCryptos();
             await loadAllUserInfo();
+            hideFullLoader(loaderTwoFull);
             displayTable(user.cryptos, userCryptosTable, [{'name': 'Name'}, {'amount': 'Amount'}, {'estimatedPrice': 'Estimated Price'}], 'user-cryptos-table');
             displayBalanceContainer(tradeBalanceHolder);
             generateSelectOptions(formSellSelect, user.cryptos);
@@ -478,7 +501,7 @@ const handleFormBuy = async event => {
             const coinAmount = convertPriceToCrypto(user.balance, coin.price);
 
             createConfirmOrder(coin.price, user.balance, coinAmount, coin.symbol, 'buy', cryptoIdDom.value);
-            
+
             showModal(modalTransaction);
         }
 
@@ -563,7 +586,7 @@ const handleFormSearch = async event => {
 
     try {
         if (searchInput.value === '') throw new Error('Search Field Cannot Be Blank!');
-
+        displayLoader(resultsSearch);
         const response = await axios.get(`${apiLink}/cryptos?q=${searchInput.value}`);
         
         if (response.data.message === 'ok') {
@@ -583,7 +606,7 @@ const handleFormSearch = async event => {
         }
     }
     catch(error) {
-     
+        removeAllChildNodes(resultsSearch); 
         if (error.message !== '') {
             displayErrorMessage(error.message);
             return;
@@ -629,13 +652,59 @@ const generateSelectOptions = (selectParent, options) => {
 
 // Create Welcome Card
 const displayWelcomeCard = (parentNode) => {
+    removeAllChildNodes(parentNode);
     const div = document.createElement('div');
     div.classList.add('welcome-card');
     const h2 = document.createElement('h2');
     h2.innerText = `Welcome, ${user.username}`;
+    const h3Title = document.createElement('h3');
+    h3Title.innerText = 'Top Holdings';
+    const ol = document.createElement('ol');
+    const topHoldings = user.cryptos.sort((cOne,cTwo) => parseFloat(cTwo.estimatedPrice) - parseFloat(cOne.estimatedPrice)).slice(0,3);
+    if (topHoldings.length) {
+        topHoldings.forEach((holding, index) => {
+            const li = document.createElement('li');
+            const img = document.createElement('img');
+            const span = document.createElement('span');
+            const place = document.createElement('span');
+            place.innerText = `${index + 1}.`;
+            span.innerText = holding.symbol;
+            img.src = holding.image;
+            li.append(place,img,span);
+            ol.append(li);
+        });
+    }
+    else {
+        ol.innerHTML = '<h3> No holdings! </h3>';
+    }
 
-    div.append(h2);
+    
+
+
+    div.append(h2,h3Title,ol);
     parentNode.append(div);
+}
+
+
+const hideAllSections = () => {
+    allSections.forEach(s => s.classList.add('hidden'));
+}
+
+
+const showFullLoader = (loader) => {
+    loader.classList.remove('hidden');
+};
+
+const hideFullLoader = (loader) => {
+    loader.classList.add('hidden');
+}
+
+const displayLoader = (parentNode) => {
+    removeAllChildNodes(parentNode);
+    const loaderDiv = document.createElement('div');
+    loaderDiv.classList.add('relative-loader','lds-hourglass'); 
+
+    parentNode.append(loaderDiv);
 }
 
 
