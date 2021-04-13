@@ -199,7 +199,8 @@ const loadAllUserInfo = async () => {
             user = {};
             user.username = response.data.username;
             user.balance = response.data.balance;
-         
+            user.startBalance = response.data.startBalance;
+
             user.cryptos = response.data.userCryptos.map(c => {
                 const {name, symbol, image, userCrypto, crypto_id} = c;
                 
@@ -354,7 +355,8 @@ const handleFormSignup = async event => {
             username: username.value,
             email: email.value,
             password: passwordOne.value,
-            balance: balance.value
+            balance: balance.value,
+            startBalance: balance.value,
         };
 
         const response = await axios.post(`${apiLink}/users`, formParams);
@@ -448,11 +450,17 @@ const displayBalanceContainer= parentNode => {
     const divChildTwo = document.createElement('div');
     const subtitleTwo = document.createElement('h3');
     const pTwo= document.createElement('p');
+    const divChildThree = document.createElement('div');
+    const subtitleThree = document.createElement('h3');
+    const pThree= document.createElement('p');
     
     div.classList.add('user-balance-container');
     subtitleOne.innerText = 'Balance';
     pOne.innerText = '$' + user.balance;
     subtitleTwo.innerText = 'Estimated Portfolio Value';
+    subtitleThree.innerText = 'Start Balance';
+    pThree.innerText = '$' + user.startBalance;
+
   
     const totalEstimatedPrice = user.cryptos.reduce((acc,curr) => {
         return acc + parseFloat(curr.estimatedPrice);
@@ -463,8 +471,9 @@ const displayBalanceContainer= parentNode => {
  
     divChildTwo.append(subtitleTwo, pTwo);
     divChildOne.append(subtitleOne, pOne);
+    divChildThree.append(subtitleThree, pThree);
 
-    div.append(divChildOne, divChildTwo);
+    div.append(divChildOne, divChildTwo, divChildThree);
 
     parentNode.append(div);
 };
