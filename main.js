@@ -7,6 +7,7 @@ let currentSection = 'search';
 let isLoggedIn = null;
 let allCryptos = null;
 let user = null;
+let buttonTransactionState = null;
 
 // Sections
 const allSections = document.querySelectorAll('section');
@@ -40,6 +41,10 @@ const formSell = document.getElementById('form-sell');
 // Buttons
 const btnToLogin = document.getElementById('btn-to-login');
 const btnToSignup = document.getElementById('btn-to-signup');
+const btnSellAll = document.querySelector('#form-sell input[name="sell-all"]');
+const btnSell = document.querySelector('#form-sell input[name="sell"]')
+const btnBuyAll = document.querySelector('#form-buy input[name="buy-all"]');
+const btnBuy = document.querySelector('#form-buy input[name="buy"]')
 
 // Else
 const userMessage = document.getElementById('user-message');
@@ -128,7 +133,7 @@ const changeNavBar = () => {
             await loadAllUserInfo();
             showSection(tradeSection);
             displayBalanceContainer(tradeBalanceHolder);
-            displayTable(user.cryptos, userCryptosTable, [{'name': 'Name'}, {'amount': 'Amount'}, {'estimatedPrice': 'Estimated Price'}], 'user-cryptos-table');
+            displayTable(user.cryptos, userCryptosTable, [{'name': 'Name'}, {'amount': 'Amount'}, {'estimatedPrice': 'Estimated Value'}], 'user-cryptos-table');
             generateSelectOptions(formSellSelect, user.cryptos);
         });
         navLogout.addEventListener('click', () => logoutUser());
@@ -195,10 +200,6 @@ const loadAllUserInfo = async () => {
                 }
             });
         }
-
-     
-    
-        
         
     } 
     catch({response}) {
@@ -449,6 +450,8 @@ const displayBalanceContainer= parentNode => {
 const handleFormBuy = async event => {
     event.preventDefault();
     try {
+
+
         const [cryptoIdDom, dollarInputDom ] = event.target.elements;
 
         const response = await axios.get(`${apiLink}/cryptos/${cryptoIdDom.value}`);
@@ -473,23 +476,47 @@ const handleFormSell = async event => {
     event.preventDefault();
 
     try {
-        const [cryptoIdDom, coinAmountDom ] = event.target.elements;
+        if (buttonTransactionState === 'sell') {
+            const [cryptoIdDom, coinAmountDom ] = event.target.elements;
 
-        const response = await axios.get(`${apiLink}/cryptos/${cryptoIdDom.value}`);
+            if  (coinAmountDom.value === '') throw new Error('Coin Amount cannot be Empty!');
 
-        const { coin } = response.data;
-        
-        const totalPrice = convertCryptoToPrice(coinAmountDom.value, coin.price);
+            const response = await axios.get(`${apiLink}/cryptos/${cryptoIdDom.value}`);
+    
+            const { coin } = response.data;
+            
+            const totalPrice = convertCryptoToPrice(coinAmountDom.value, coin.price);
+    
+            createConfirmOrder(coin.price, totalPrice, coinAmountDom.value, coin.symbol, 'sell', cryptoIdDom.value);
+            
+            coinAmountDom.value = '';
+        }   
 
-        createConfirmOrder(coin.price, totalPrice, coinAmountDom.value, coin.symbol, 'sell', cryptoIdDom.value);
-        
-        coinAmountDom.value = '';
+        else if( buttonTransactionState === 'sell-all') {
+            const [cryptoIdDom] = event.target.elements;
+
+            const response = await axios.get(`${apiLink}/cryptos/${cryptoIdDom.value}`);
+    
+            const { coin } = response.data;
+            
+            const userAmount = user.cryptos.find(crypto => crypto.cryptoId === cryptoIdDom.value).amount;
+          
+            const totalPrice = convertCryptoToPrice(userAmount, coin.price);
+
+            createConfirmOrder(coin.price, totalPrice, userAmount, coin.symbol, 'sell-all', cryptoIdDom.value);
+    
+        }
+     
 
         showModal(modalTransaction);
        
     }
     catch(error) {
-
+        if (error.message !== '') {
+            displayErrorMessage(error.message);
+            return;
+        }
+        displayErrorMessage(error.response.data.error);
        
     }
 };
@@ -578,7 +605,16 @@ const generateSelectOptions = (selectParent, options) => {
     return; 
 };
 
+// Create Welcome Card
+const displayWelcomeCard = (parentNode) => {
+    const div = document.createElement('div');
+    div.classList.add('welcome-card');
+    const h2 = document.createElement('h2');
+    h2.innerText = `Welcome, ${user.username}`;
 
+    div.append(h2);
+    parentNode.append(div);
+}
 
 
 
@@ -607,8 +643,10 @@ formSell.addEventListener('submit', handleFormSell);
 // Button Event Listeners
 btnToSignup.addEventListener('click',() => showModal(modalSignup));
 btnToLogin.addEventListener('click',() => showModal(modalLogin));
-
-
+btnSell.addEventListener('click', () => buttonTransactionState = 'sell');
+btnBuy.addEventListener('click', () => buttonTransactionState = 'buy');
+btnBuyAll.addEventListener('click', () => buttonTransactionState = 'buy-all');
+btnSellAll.addEventListener('click', () => buttonTransactionState = 'sell-all');
 // Miscaellenous Event Listeners
 modalBackground.addEventListener('click', closeAllModals);
 

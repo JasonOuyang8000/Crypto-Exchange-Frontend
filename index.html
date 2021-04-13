@@ -61,7 +61,8 @@
                         </select>
                     
                         <input type="number" placeholder="Dollar Amount" name="dollar-amount" min="0" step="0.01" required>
-                        <input type="submit" value="Buy">
+                        <input type="submit" value="Buy" name="buy">
+                        <input type="submit" value="Buy All" name="buy-all">
                     </form>
                 </div>
                 <div>
@@ -70,8 +71,9 @@
                             
                         </select>
                     
-                        <input type="number" placeholder="Coin Amount" min="0.00000001" step="0.00000001" name="coin-amount">
-                        <input type="submit" value="Sell">
+                        <input type="number" placeholder="Coin Amount" min="0.00000001" step="0.00000001" name="coin-amount" >
+                        <input type="submit" value="Sell" name="sell">
+                        <input type="submit" value="Sell All" name="sell-all">
                     </form>
                 </div>
             
@@ -81,7 +83,7 @@
         <section  class="hidden" id="section-dashboard">
             <div id="balance-holder-dashboard"></div>
             <div class="row">
-                <div  id="sidebar-one">
+                <div id="sidebar-one">
 
                 </div>
                 <div id="dashboard-container-one">
@@ -142,6 +144,9 @@
     <div class="hidden" id="user-message">
         <h3></h3>
     </div>
+
+    <!-- loader from loading.io -->
+    <div class="lds-hourglass"></div>
     
 
     

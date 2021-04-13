@@ -211,6 +211,7 @@ form input {
     background: rgba(23, 79, 131, 0.555);
     padding: 30px;
     border: 1px solid rgb(255, 220, 25);
+    height: 250px;
 }
 
 .form-transaction select {
@@ -252,6 +253,7 @@ form input {
     display: block;
     width: 100%;
     background: rgb(245, 216, 54);
+    margin-bottom: 20px;
 }
 
 /* Buttons */
