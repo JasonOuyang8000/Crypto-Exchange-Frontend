@@ -450,24 +450,46 @@ const displayBalanceContainer= parentNode => {
 const handleFormBuy = async event => {
     event.preventDefault();
     try {
+        if (buttonTransactionState === 'buy') {
+            const [cryptoIdDom, dollarInputDom ] = event.target.elements;
 
+            if (dollarInputDom.value === '') throw new Error('Dollar Amount cannot be empty!');
 
-        const [cryptoIdDom, dollarInputDom ] = event.target.elements;
+            const response = await axios.get(`${apiLink}/cryptos/${cryptoIdDom.value}`);
+    
+            const { coin } = response.data;
+            
+            const coinAmount = convertPriceToCrypto(dollarInputDom.value, coin.price);
+            
+            createConfirmOrder(coin.price, dollarInputDom.value, coinAmount, coin.symbol, 'buy', cryptoIdDom.value);
+            
+            dollarInputDom.value = '';
+            
+            showModal(modalTransaction);
+        }
 
-        const response = await axios.get(`${apiLink}/cryptos/${cryptoIdDom.value}`);
+        else if (buttonTransactionState === 'buy-all') {
+            const [cryptoIdDom ] = event.target.elements;
 
-        const { coin } = response.data;
-        
-        const coinAmount = convertPriceToCrypto(dollarInputDom.value, coin.price);
-        
-        createConfirmOrder(coin.price, dollarInputDom.value, coinAmount, coin.symbol, 'buy', cryptoIdDom.value);
-        
-        dollarInputDom.value = '';
-        
-        showModal(modalTransaction);
+            const response = await axios.get(`${apiLink}/cryptos/${cryptoIdDom.value}`);
+    
+            const { coin } = response.data;
+
+            const coinAmount = convertPriceToCrypto(user.balance, coin.price);
+
+            createConfirmOrder(coin.price, user.balance, coinAmount, coin.symbol, 'buy', cryptoIdDom.value);
+            
+            showModal(modalTransaction);
+        }
+
+       
     }
-    catch({response}) {
-        displayErrorMessage(response.data.error);
+    catch(error) {
+        if (error.message !== '') {
+            displayErrorMessage(error.message);
+            return;
+        }
+        displayErrorMessage(error.response.data.error);
     }
  
 };
