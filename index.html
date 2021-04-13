@@ -70,7 +70,7 @@
                             
                         </select>
                     
-                        <input type="number" placeholder="Coin Amount" name="coin-amount">
+                        <input type="number" placeholder="Coin Amount" min="0.00000001" step="0.00000001" name="coin-amount">
                         <input type="submit" value="Sell">
                     </form>
                 </div>
@@ -79,7 +79,17 @@
         </section>
         <!-- Dashboard Section -->
         <section  class="hidden" id="section-dashboard">
-            dashboard
+            <div id="balance-holder-dashboard"></div>
+            <div class="row">
+                <div  id="sidebar-one">
+
+                </div>
+                <div id="dashboard-container-one">
+                    
+                </div>
+
+
+            </div>
             
         </section>
         <!-- Search Section -->
