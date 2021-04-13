@@ -92,9 +92,25 @@ nav span:hover {
 }
 
 #modal-transaction {
-    color: #000;
+    background: rgba(23, 79, 131, 0.555);
+    text-align: center;
 }
 
+#modal-transaction p {
+
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#modal-transaction button {
+    width: 100%;
+    display: block;
+    border-radius: 20px;
+    border: 0;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    background: rgb(250, 183, 59);
+}
 
 /* Forms */
 form input {
@@ -142,7 +158,7 @@ form input {
 
 #form-search input[type="text"] {
     padding: 10px 20px 10px 20px; 
-    background: rgb(14, 26, 92);
+    background: rgba(0, 0, 0, 0.555);
     width: 70%;
     border: 0;
     box-shadow: 1px 1px 1px 2px rgba(26, 25, 25, 0.055);
@@ -168,7 +184,7 @@ form input {
     color: rgb(252, 252, 252);
     border-radius: 40px;
     box-shadow: 1px 1px 0px 0px rgba(32, 32, 32, 0.315);
-    background: rgb(14, 26, 92);
+    background: rgba(0, 0, 0, 0.555);
     font-size: 18px;
     border: 2px solid rgb(243, 217, 70);
 }
@@ -181,6 +197,7 @@ form input {
 .form-holder {
     display: flex;
     margin-top: 40px;
+  
 }
 
 .form-holder div {
@@ -190,8 +207,10 @@ form input {
 .form-transaction {
     border: 1px solid black;
     width: 400px;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.555);
+    margin: 0 auto;
+    background: rgba(23, 79, 131, 0.555);
+    padding: 30px;
+    border: 1px solid rgb(255, 220, 25);
 }
 
 .form-transaction select {
@@ -232,6 +251,7 @@ form input {
     border: 0;
     display: block;
     width: 100%;
+    background: rgb(245, 216, 54);
 }
 
 /* Buttons */
@@ -303,6 +323,41 @@ input[type="submit"]:hover {
    border: 1px solid rgb(185, 142, 142);
 }   
 
+#user-cryptos-table-holder {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: 400px;
+    overflow-y: auto;
+}
+
+#user-cryptos-table-holder > div {
+    background: rgba(5, 5, 5, 0.719);
+    width: 100%;
+    height: 100%;
+    line-height: 400px;
+    text-align: center;
+}
+
+.user-cryptos-table {
+
+    border: 1px solid rgb(255, 255, 255);
+    padding: 10px;
+    background: rgba(5, 5, 5, 0.719);
+    margin: 0 auto;
+}
+
+.user-cryptos-table td img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.user-cryptos-table div {
+    display: flex;
+    padding: 10px 20px;
+    align-items: center;
+    justify-content: center;
+}
 
 /* Card */
 #results-search {
@@ -324,7 +379,7 @@ input[type="submit"]:hover {
 .card-crypto {
     box-shadow: 1px 1px 1px 1px rgba(167, 164, 164, 0.192);
     text-align: center;
-    background: rgb(253, 253, 253);
+    background: rgba(255, 255, 255, 0.637);
     padding: 10px;
     border: 3px solid rgb(255, 220, 25);
     border-radius: 25px;
@@ -348,6 +403,23 @@ input[type="submit"]:hover {
     margin-bottom: 10px;
 }
 
+
+/* User Balance  Container*/
+.user-balance-container {
+
+    margin: 40px auto;
+    text-align: center;
+    background: rgba(6, 8, 26, 0.664);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-evenly;
+    border: 1px solid rgb(117, 107, 52);
+    border-radius: 5px;
+}
+
+.user-balance-container div {
+
+}
 
 /* Helpers */
 .hidden {

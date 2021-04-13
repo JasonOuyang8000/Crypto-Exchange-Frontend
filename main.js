@@ -32,8 +32,10 @@ const formLogin = document.getElementById('form-login');
 const formSignup = document.getElementById('form-signup');
 const formSearch = document.getElementById('form-search');
 const formBuySelect = document.querySelector('#form-buy select');
+const formSellSelect = document.querySelector('#form-sell select');
 const formBuy = document.querySelector('#form-buy');
 const formBuyDollarInput = document.querySelector('#form-buy input[type="number"]');
+const formSell = document.getElementById('form-sell');
 
 // Buttons
 const btnToLogin = document.getElementById('btn-to-login');
@@ -43,7 +45,8 @@ const btnToSignup = document.getElementById('btn-to-signup');
 const userMessage = document.getElementById('user-message');
 const resultsSearch = document.getElementById('results-search');
 const allCryptosHolder = document.getElementById('all-cryptos-holder');
-
+const userCryptosTable = document.getElementById('user-cryptos-table-holder');
+const tradeBalanceHolder = document.getElementById('balance-holder-trade');
 
 // Show Section
 const showSection = (section) => {
@@ -95,7 +98,7 @@ const changeNavBar = () => {
         showSection(allCryptosSection);
         if (allCryptos !== null ) {
             await loadAllCryptos();
-            displayTable(allCryptos, allCryptosHolder, ['rank','name', 'symbol','price', 'marketCap'], 'all-cryptos-table');
+            displayTable(allCryptos, allCryptosHolder, [{'rank': 'Rank'},{'name': 'Name'}, {'symbol':'Symbol'},{'price': 'Price'}, {'marketCap': 'Market Cap'}], 'all-cryptos-table');
         }
     });
     
@@ -112,8 +115,12 @@ const changeNavBar = () => {
 
         navDashboard.addEventListener('click', () => showSection(dashboardSection));
         navTrade.addEventListener('click', async () => {
+            await loadAllCryptos();
             await loadAllUserInfo();
             showSection(tradeSection);
+            displayBalanceContainer(tradeBalanceHolder);
+            displayTable(user.cryptos, userCryptosTable, [{'name': 'Name'}, {'amount': 'Amount'}, {'estimatedPrice': 'Estimated Price'}], 'user-cryptos-table');
+            generateSelectOptions(formSellSelect, user.cryptos);
         });
         navLogout.addEventListener('click', () => logoutUser());
 
@@ -157,7 +164,31 @@ const loadAllUserInfo = async () => {
             }
         });
 
-        console.log(response.data);
+        if (response.data.message = 'ok') {
+            user = {};
+            user.username = response.data.username;
+            user.balance = response.data.balance;
+         
+            user.cryptos = response.data.userCryptos.map(c => {
+                const {name, symbol, image, userCrypto, crypto_id} = c;
+                
+                const price = allCryptos.find(c => c.uuid === crypto_id).price;
+
+                const estimatedPrice = convertCryptoToPrice(userCrypto.amount, price);
+                
+                return {
+                    name,
+                    cryptoId: crypto_id,
+                    amount: userCrypto.amount,
+                    image,
+                    symbol,
+                    estimatedPrice,
+                }
+            });
+        }
+
+     
+    
         
         
     } 
@@ -171,6 +202,13 @@ const loadAllUserInfo = async () => {
 const displayTable = (cryptos, parent, props, classStyle) => {
     removeAllChildNodes(parent);
  
+    if (cryptos.length === 0) {
+        const placeHolder = document.createElement('div');
+        placeHolder.innerText = "You don't have any crypto coins.";
+        parent.append(placeHolder);
+        return
+    }
+
     const table = document.createElement('table');
     const thead = document.createElement('thead');
     const tr = document.createElement('tr');
@@ -178,25 +216,24 @@ const displayTable = (cryptos, parent, props, classStyle) => {
 
     table.classList.add(classStyle);
  
-    props.forEach(prop => {
+    props.forEach(obj => {
+        const [value] = Object.values(obj);
         const th = document.createElement('th');
-        th.innerText = prop;
+        th.innerText = value;
         tr.append(th);
     });
     thead.append(tr);
 
     cryptos.forEach(crypto => {
         const tr = document.createElement('tr');
-        props.forEach(prop => {
+        props.forEach(obj => {
+            const [prop] = Object.keys(obj);
             const td = document.createElement('td');
             const div = document.createElement('div');
-            if (prop === 'name' && crypto['iconUrl']) {
+            if (prop === 'name' && (crypto['iconUrl'] || crypto['image']) ) {
                 const img = document.createElement('img');
-                img.src = crypto['iconUrl'];
+                img.src = crypto['iconUrl'] || crypto['image'];
                 div.append(img);
-
-                div.style.color = crypto['color'];
-
             }
             div.append(crypto[prop]);
             td.append(div);
@@ -290,6 +327,7 @@ const handleFormSignup = async event => {
         };
 
         const response = await axios.post(`${apiLink}/users`, formParams);
+
         const { userToken, message } = response.data;
         if (message === 'ok') {
             localStorage.setItem('userToken', userToken);
@@ -305,8 +343,8 @@ const handleFormSignup = async event => {
 
     }
     catch(error) {
-     
-        if (error.message === '') {
+      
+        if (error.message !== '') {
            
             displayErrorMessage(error.message);
             return;
@@ -317,14 +355,86 @@ const handleFormSignup = async event => {
 
 }
 
-const createConfirmOrder = (coinPrice, dollarAmount, totalAmount, symbol) => {
+const createConfirmOrder = (coinPrice, dollarAmount, totalAmount, symbol, type , cryptoId) => {
     removeAllChildNodes(modalTransaction); 
     const p = document.createElement('p');
-    p.innerText = `You are buying ${totalAmount} ${symbol} for  $${dollarAmount}. (${1 / parseFloat(coinPrice)} per $1)`;
-    modalTransaction.append(p);
-    console.log('test');
+    const confirmButton = document.createElement('button');
+    const cancelButton = document.createElement('button');
 
+
+
+    p.innerText = ` ${totalAmount} ${symbol} for  $${dollarAmount}.`;
+    confirmButton.innerText = "Okay";
+    cancelButton.innerText = 'Cancel';
+    
+    modalTransaction.append(p, confirmButton, cancelButton);
+    confirmButton.addEventListener('click',() => processOrder(dollarAmount, totalAmount, type, cryptoId));
+
+    cancelButton.addEventListener('click', () => closeAllModals());
 }
+
+
+const processOrder = async (dollarAmount, coinAmount, type, cryptoId) => {
+    try {
+        
+        const formParams = {
+                cryptoId,
+                dollarAmount,
+                coinAmount,
+                type
+        };
+        const response = await axios.put(`${apiLink}/users/cryptos`, formParams,  {
+            headers: {
+                userToken: localStorage.getItem('userToken')
+            }
+        });
+
+        if (response.data.message = 'ok') {
+            await loadAllCryptos();
+            await loadAllUserInfo();
+            displayTable(user.cryptos, userCryptosTable, [{'name': 'Name'}, {'amount': 'Amount'}, {'estimatedPrice': 'Estimated Price'}], 'user-cryptos-table');
+            displayBalanceContainer(tradeBalanceHolder);
+            generateSelectOptions(formSellSelect, user.cryptos);
+            closeAllModals();
+        }
+
+        
+    }
+    catch({response}) {
+        displayErrorMessage(response.data.error);
+    }
+}
+
+
+const displayBalanceContainer= parentNode => {
+    removeAllChildNodes(parentNode);
+    const div = document.createElement('div');
+    const divChildOne = document.createElement('div');
+    const subtitleOne = document.createElement('h3');
+    const pOne = document.createElement('p');
+    const divChildTwo = document.createElement('div');
+    const subtitleTwo = document.createElement('h3');
+    const pTwo= document.createElement('p');
+    
+    div.classList.add('user-balance-container');
+    subtitleOne.innerText = 'Balance';
+    pOne.innerText = '$' + user.balance;
+    subtitleTwo.innerText = 'Estimated Portfolio Value';
+    const totalEstimatedPrice = user.cryptos.reduce((acc,curr) => {
+        
+
+
+        return acc + parseFloat(curr.estimatedPrice);
+    }, 0);
+    pTwo.innerText = `$${totalEstimatedPrice.toFixed(2)}`;
+ 
+    divChildTwo.append(subtitleTwo, pTwo);
+    divChildOne.append(subtitleOne, pOne);
+
+    div.append(divChildOne, divChildTwo);
+
+    parentNode.append(div);
+};
 
 
 const handleFormBuy = async event => {
@@ -338,7 +448,7 @@ const handleFormBuy = async event => {
         
         const coinAmount = convertPriceToCrypto(dollarInputDom.value, coin.price);
         
-        createConfirmOrder(coin.price, dollarInputDom.value, coinAmount, coin.symbol);
+        createConfirmOrder(coin.price, dollarInputDom.value, coinAmount, coin.symbol, 'buy', cryptoIdDom.value);
         
         
         showModal(modalTransaction);
@@ -356,6 +466,12 @@ const convertPriceToCrypto = (dollarAmount, cryptoPrice) => {
 
     return total;
 }
+
+const convertCryptoToPrice = (cryptoAmount, dollarPrice) => {
+    const total = parseFloat(cryptoAmount) * parseFloat(dollarPrice); 
+
+    return total.toFixed(2);
+} 
 
 const handleFormSearch = async event => {
     event.preventDefault();
@@ -419,13 +535,16 @@ const generateSelectOptions = (selectParent, options) => {
     removeAllChildNodes(selectParent);
     options.forEach(o => {  
         const option = document.createElement('option');
-        option.value = o['uuid'];
+        option.value = o['uuid'] || o['cryptoId'];
         option.innerText =` ${o['symbol']} (${o['name']})`;
         selectParent.append(option);
     });
 
     return; 
 };
+
+
+
 
 
 // Displays Error Message for short time.
