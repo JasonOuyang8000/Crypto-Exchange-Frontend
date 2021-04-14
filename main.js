@@ -7,6 +7,8 @@ const ctx = canvas.getContext('2d');
 
 
 
+
+
 const apiLink = 'http://localhost:3001'
 // State
 let isLoggedIn = null;

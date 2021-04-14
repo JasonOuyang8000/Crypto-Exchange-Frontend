@@ -27,7 +27,8 @@ app.get('/main.js', async (req, res) => {
 app.get('/style.css', (req, res) => {
   const filepath = path.join(__dirname, 'style.css')
   res.type('css').sendFile(filepath)
-})
+});
+
 
 const port = process.env.PORT || 3000
 app.listen(port, () => {
