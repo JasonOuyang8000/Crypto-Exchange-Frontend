@@ -1,12 +1,19 @@
 // Body 
 const body = document.querySelector('body');
 
+// Chart
+const canvas =  document.getElementById('crypto-chart');
+const ctx = canvas.getContext('2d');
+
+
+
 const apiLink = 'http://localhost:3001'
 // State
 let isLoggedIn = null;
 let allCryptos = null;
 let user = null;
 let buttonTransactionState = null;
+myChart = null;
 
 // Sections
 const allSections = document.querySelectorAll('section');
@@ -26,6 +33,7 @@ const modalSignup = document.getElementById('modal-signup');
 const modalLogin = document.getElementById('modal-login');
 const modalBackground = document.getElementById('modal-background');
 const modalTransaction = document.getElementById('modal-transaction');
+const modalChart = document.getElementById('modal-chart');
 
 // Forms
 const formLogin = document.getElementById('form-login');
@@ -643,10 +651,63 @@ const createCryptoCard =  ({uuid, name, symbol, iconUrl}) => {
 
     cardDom.setAttribute('data-id', uuid);
 
+    cardDom.addEventListener('click', async (event) => {
+        try {
+            showFullLoader(loaderTwoFull);
+            const response = await axios.get(`${apiLink}/cryptos/${uuid}/history?timePeriod=1y`);
+            const { formattedHistory } = response.data;
+            loadChart(formattedHistory);
+           
+            hideFullLoader(loaderTwoFull);
+        }
+        catch(error) {
+            console.log(error);
+        }
+    });
+
     cardDom.append(imgDom, symbolDom, nameDom);
     cardHolderDom.append(cardDom);
     return cardHolderDom;
 }
+
+const loadChart = (history) => {
+    if (myChart) myChart.destroy(); 
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    showModal(modalChart);
+
+    if (history.length > 60) {
+        history = history.filter((h,i) => i % 3 === 0);    
+    }
+   
+    const historyLabels = history.map(h => h.timestamp.split(',')[0]);
+    const historyData = history.map(h => h.price);
+    myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: historyLabels,
+            datasets: [{
+                label: 'One Year Price Change',
+                data: historyData ,
+                backgroundColor: [
+                    'rgb(255,255,0)',
+                
+                ],
+                borderColor: [
+                    'rgb(0,0,0)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+};
 
 // Generate Options in Select
 const generateSelectOptions = (selectParent, options) => {
@@ -759,4 +820,8 @@ loadAllCryptos().then(() => {
     generateSelectOptions(formBuySelect, allCryptos);
     authenticate();
 });
+
+
+// Chart 
+
 

@@ -396,6 +396,7 @@ input[type="submit"]:hover {
     border-radius: 25px;
     height: 100%;
     color: #000000;
+    cursor: pointer;
 }
 
 .card-crypto h3:nth-child(2) {
@@ -654,3 +655,4 @@ input[type="submit"]:hover {
     top: 40%;
 
 }
+
