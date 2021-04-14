@@ -102,7 +102,6 @@ const logoutUser = () => {
     authenticate();
 }
 
-// Update Trade Section 
 
 // Change NavBar depending on login state and add event listeners to each of the nav links.
 const changeNavBar = () => {
@@ -272,6 +271,13 @@ const displayTable = (cryptos, parent, props, classStyle) => {
                 const img = document.createElement('img');
                 img.src = crypto['iconUrl'] || crypto['image'];
                 div.append(img);
+
+                div.addEventListener('click', async() => {
+                    const cryptoId = crypto['uuid'] || crypto['cryptoId'];
+                    getHistory(cryptoId, crypto[prop]);
+                });
+                div.classList.add('table-col-div');
+
             }
             div.append(crypto[prop]);
             td.append(div);
@@ -284,6 +290,20 @@ const displayTable = (cryptos, parent, props, classStyle) => {
     
     parent.append(table);
 };
+
+const getHistory = async (id, name) => {
+    try {
+        showFullLoader(loaderTwoFull);
+        const response = await axios.get(`${apiLink}/cryptos/${id}/history?timePeriod=1y`);
+        const { formattedHistory } = response.data;
+        loadChart(formattedHistory, name);
+       
+        hideFullLoader(loaderTwoFull);
+    }
+    catch(error) {
+        console.log(error);
+    }
+}
 
 
 // Authenticate User Check Token. Also Determines which navbar to load for the user.
@@ -385,14 +405,15 @@ const handleFormSignup = async event => {
 
     }
     catch(error) {
-      
+    
+
         if (error.message !== '') {
-           
+            
             displayErrorMessage(error.message);
             return;
         }
        
-        displayErrorMessage(error.response.data.error);
+        displayErrorMessage(error.response.data.error.message);
     }
 
 }
@@ -654,17 +675,7 @@ const createCryptoCard =  ({uuid, name, symbol, iconUrl}) => {
     cardDom.setAttribute('data-id', uuid);
 
     cardDom.addEventListener('click', async (event) => {
-        try {
-            showFullLoader(loaderTwoFull);
-            const response = await axios.get(`${apiLink}/cryptos/${uuid}/history?timePeriod=1y`);
-            const { formattedHistory } = response.data;
-            loadChart(formattedHistory);
-           
-            hideFullLoader(loaderTwoFull);
-        }
-        catch(error) {
-            console.log(error);
-        }
+        getHistory(uuid,name);
     });
 
     cardDom.append(imgDom, symbolDom, nameDom);
@@ -672,7 +683,7 @@ const createCryptoCard =  ({uuid, name, symbol, iconUrl}) => {
     return cardHolderDom;
 }
 
-const loadChart = (history) => {
+const loadChart = (history,name) => {
     if (myChart) myChart.destroy(); 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     showModal(modalChart);
@@ -680,6 +691,7 @@ const loadChart = (history) => {
     if (history.length > 60) {
         history = history.filter((h,i) => i % 3 === 0);    
     }
+  
    
     const historyLabels = history.map(h => h.timestamp.split(',')[0]);
     const historyData = history.map(h => h.price);
@@ -688,7 +700,7 @@ const loadChart = (history) => {
         data: {
             labels: historyLabels,
             datasets: [{
-                label: 'One Year Price Change',
+                label: `One Year Price Change ${name}`,
                 data: historyData ,
                 backgroundColor: [
                     'rgb(255,255,0)',
@@ -703,8 +715,8 @@ const loadChart = (history) => {
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
-                }
+                    beginAtZero: true,
+                },
             }
         }
     });
