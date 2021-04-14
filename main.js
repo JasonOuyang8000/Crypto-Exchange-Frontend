@@ -3,7 +3,6 @@ const body = document.querySelector('body');
 
 const apiLink = 'http://localhost:3001'
 // State
-let currentSection = 'search';
 let isLoggedIn = null;
 let allCryptos = null;
 let user = null;
@@ -79,6 +78,7 @@ const closeAllModals = () => {
 }
 
 
+
 const removeAllChildNodes = parentNode => {
     while (parentNode.firstChild) {
         parentNode.removeChild(parentNode.firstChild);
@@ -105,7 +105,6 @@ const changeNavBar = () => {
     navSearch.innerText = 'Search';
     navSearch.addEventListener('click', () => showSection(searchSection));
     navAllCryptos.addEventListener('click', async () => {
-       
         if (allCryptos !== null ) {
             showFullLoader(loaderTwoFull);
             hideAllSections();
@@ -481,7 +480,9 @@ const displayBalanceContainer= parentNode => {
 
 const handleFormBuy = async event => {
     event.preventDefault();
+
     try {
+        
         if (buttonTransactionState === 'buy') {
             const [cryptoIdDom, dollarInputDom ] = event.target.elements;
 
@@ -494,7 +495,7 @@ const handleFormBuy = async event => {
             const coinAmount = convertPriceToCrypto(dollarInputDom.value, coin.price);
             
             createConfirmOrder(coin.price, dollarInputDom.value, coinAmount, coin.symbol, 'buy', cryptoIdDom.value);
-            
+       
             dollarInputDom.value = '';
             
             showModal(modalTransaction);
@@ -511,10 +512,11 @@ const handleFormBuy = async event => {
 
             createConfirmOrder(coin.price, user.balance, coinAmount, coin.symbol, 'buy', cryptoIdDom.value);
 
+            
             showModal(modalTransaction);
         }
 
-       
+     
     }
     catch(error) {
         if (error.message !== '') {
@@ -665,6 +667,7 @@ const displayWelcomeCard = (parentNode) => {
     const div = document.createElement('div');
     div.classList.add('welcome-card');
     const h2 = document.createElement('h2');
+    const bottomDiv = document.createElement('div');
     h2.innerText = `Welcome, ${user.username}`;
     const h3Title = document.createElement('h3');
     h3Title.innerText = 'Top Holdings';
@@ -688,9 +691,8 @@ const displayWelcomeCard = (parentNode) => {
     }
 
     
-
-
-    div.append(h2,h3Title,ol);
+    bottomDiv.append(h3Title,ol);
+    div.append(h2, bottomDiv);
     parentNode.append(div);
 }
 
