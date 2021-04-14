@@ -405,15 +405,18 @@ const handleFormSignup = async event => {
 
     }
     catch(error) {
-    
-
-        if (error.message !== '') {
-            
+        console.log(error.response);
+  
+        if (error.response == undefined ) {
             displayErrorMessage(error.message);
-            return;
+          
+        }
+        else {
+            displayErrorMessage(error.response.data.error);
+          
         }
        
-        displayErrorMessage(error.response.data.error.message);
+      
     }
 
 }
