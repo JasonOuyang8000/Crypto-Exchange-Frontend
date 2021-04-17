@@ -5,17 +5,13 @@ const body = document.querySelector('body');
 const canvas =  document.getElementById('crypto-chart');
 const ctx = canvas.getContext('2d');
 
-
-
-
-
 const apiLink = 'http://localhost:3001'
 // State
 let isLoggedIn = null;
 let allCryptos = null;
 let user = null;
 let buttonTransactionState = null;
-myChart = null;
+let myChart = null;
 
 // Sections
 const allSections = document.querySelectorAll('section');
@@ -75,11 +71,15 @@ const showSection = (section) => {
 
 
 // Show Modal
+
 const showModal = (modal) => {
     allModals.forEach(m => m.classList.add('hidden'));
     modal.classList.remove('hidden');
+    const currentPos = parseInt(document.documentElement.scrollTop);
+    modal.style.top = (currentPos + 170) + 'px';
     modalBackground.classList.remove('hidden');
-};
+}
+
 
 // Close All Modals
 const closeAllModals = () => {
@@ -297,7 +297,6 @@ const getHistory = async (id, name) => {
         const response = await axios.get(`${apiLink}/cryptos/${id}/history?timePeriod=1y`);
         const { formattedHistory } = response.data;
         loadChart(formattedHistory, name);
-       
         hideFullLoader(loaderTwoFull);
     }
     catch(error) {
@@ -309,7 +308,7 @@ const getHistory = async (id, name) => {
 // Authenticate User Check Token. Also Determines which navbar to load for the user.
 const authenticate = async () => {
     const userToken = localStorage.getItem('userToken');
-    showFullLoader(loaderOneFull);
+ 
     if (userToken) {
         try {   
             const response = await axios.get(`${apiLink}/users/verify`,{
@@ -322,17 +321,17 @@ const authenticate = async () => {
             if (message === 'ok') {
                 isLoggedIn = true;
             }
-            hideFullLoader(loaderOneFull);
+      
         }
         catch({response}) {
             isLoggedIn = false;
-            hideFullLoader(loaderOneFull);
+      
         }
     }
 
    else {
        isLoggedIn = false;
-       hideFullLoader(loaderOneFull);
+ 
    }
 
    
@@ -353,11 +352,15 @@ const handleFormLogin = async event => {
     };
 
     try {
+
+       showFullLoader(loaderOneFull);
+
        const response = await axios.post(`${apiLink}/users/login`, formParams);
        const {userToken, message} = response.data;
        if (message === 'ok') {
            localStorage.setItem('userToken', userToken);
-           authenticate();
+           await authenticate();
+           hideFullLoader(loaderOneFull);
            usernameInput.value = '';
            passwordInput.value = '';
            closeAllModals();
@@ -365,12 +368,14 @@ const handleFormLogin = async event => {
 
     }
     catch({response}) {
+        hideFullLoader(loaderOneFull);
         displayErrorMessage(response.data.error);
     }
 }
 
 const handleFormSignup = async event => {
     event.preventDefault();
+    showFullLoader(loaderOneFull);
     try {
         const [username, email, passwordOne, passwordTwo, balance] = event.target.elements;
       
@@ -393,7 +398,8 @@ const handleFormSignup = async event => {
         const { userToken, message } = response.data;
         if (message === 'ok') {
             localStorage.setItem('userToken', userToken);
-            authenticate();
+            await authenticate();
+            hideFullLoader(loaderOneFull);
             username.value = '';
             email.value = '';
             passwordOne.value = '';
@@ -594,7 +600,6 @@ const handleFormSell = async event => {
             const totalPrice = convertCryptoToPrice(userAmount, coin.price);
 
             createConfirmOrder(coin.price, totalPrice, userAmount, coin.symbol, 'sell-all', cryptoIdDom.value);
-    
         }
      
 
@@ -659,8 +664,6 @@ const handleFormSearch = async event => {
         displayErrorMessage(error.response.data.error);
     }
 };
-
-
 
 
 const createCryptoCard =  ({uuid, name, symbol, iconUrl}) => {
@@ -781,6 +784,9 @@ const hideAllSections = () => {
 
 
 const showFullLoader = (loader) => {
+
+    const scrollPos = document.documentElement.scrollTop;
+
     loader.classList.remove('hidden');
 };
 
@@ -833,12 +839,10 @@ modalBackground.addEventListener('click', closeAllModals);
 
 
 // On Load
-loadAllCryptos().then(() => {
-    generateSelectOptions(formBuySelect, allCryptos);
-    authenticate();
-});
-
-
-// Chart 
-
-
+showFullLoader(loaderOneFull);
+loadAllCryptos()
+    .then(()=> authenticate()) 
+    .then(() => {
+        hideFullLoader(loaderOneFull);
+        generateSelectOptions(formBuySelect, allCryptos);
+    });
