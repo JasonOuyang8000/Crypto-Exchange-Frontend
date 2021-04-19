@@ -197,7 +197,7 @@ const loadAllCryptos = async () => {
 const loadAllUserInfo = async () => {
  
     try {
-        const response = await axios.get(`${apiLink}/users/cryptos`, {
+        const response   = await axios.get(`${apiLink}/users/cryptos`, {
             headers: {
                 userToken: localStorage.getItem('userToken')
             }
@@ -212,6 +212,8 @@ const loadAllUserInfo = async () => {
             user.cryptos = response.data.userCryptos.map(c => {
                 const {name, symbol, image, userCrypto, crypto_id} = c;
                 
+                console.log(allCryptos);
+
                 const price = allCryptos.find(c => c.uuid === crypto_id).price;
 
                 const estimatedPrice = convertCryptoToPrice(userCrypto.amount, price);
