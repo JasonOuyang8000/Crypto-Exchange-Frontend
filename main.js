@@ -228,8 +228,8 @@ const loadAllUserInfo = async () => {
         }
       
     } 
-    catch({response}) {
-    
+    catch(error) {
+        console.log(error);
         displayErrorMessage(response.data.error);
         hideFullLoader(loaderTwoFull);
     }
