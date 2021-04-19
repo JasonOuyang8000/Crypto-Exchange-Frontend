@@ -212,10 +212,12 @@ const loadAllUserInfo = async () => {
             user.cryptos = response.data.userCryptos.map(c => {
                 const {name, symbol, image, userCrypto, crypto_id} = c;
                 
-                console.log(allCryptos);
+                console.log(crypto_id);
+
 
                 const price = allCryptos.find(c => c.uuid === crypto_id).price;
 
+               
                 const estimatedPrice = convertCryptoToPrice(userCrypto.amount, price);
                 
                 return {
