@@ -416,7 +416,7 @@ const handleFormSignup = async event => {
     }
     catch(error) {
         console.log(error.response);
-  
+        hideFullLoader(loaderOneFull);
         if (error.response == undefined ) {
             displayErrorMessage(error.message);
           
